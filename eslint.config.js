@@ -23,7 +23,7 @@ export default [
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/explicit-function-return-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/prefer-const': 'error',
+      'prefer-const': 'error',
       'no-console': 'off', // Allow console for CLI app
     },
   },

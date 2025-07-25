@@ -1,5 +1,6 @@
 {
   "name": "todoapp-ts",
+  "type": "module",
   "version": "1.0.0",
   "description": "[![CI](https://github.com/marcinpilarczyk/TodoApp-TS/actions/workflows/ci.yml/badge.svg)](https://github.com/marcinpilarczyk/TodoApp-TS/actions/workflows/ci.yml)",
   "main": "index.js",
@@ -8,13 +9,14 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "start": "node dist/index.js",
+    "dev": "nodemon src/interfaces/cli.ts",
+    "start": "node dist/interfaces/cli.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "format": "prettier --write src/**/*.ts"
+    "format": "prettier --write .",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -53,8 +55,13 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "roots": ["<rootDir>/src"],
-    "testMatch": ["**/__tests__/**/*.ts", "**/?(*.)+(spec|test).ts"],
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.ts",
+      "**/?(*.)+(spec|test).ts"
+    ],
     "collectCoverageFrom": [
       "src/**/*.ts",
       "!src/**/*.d.ts"

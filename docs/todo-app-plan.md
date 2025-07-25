@@ -3,9 +3,11 @@
 This plan has been split into individual task files for better organization and tracking.
 
 ## Additional Information
+
 See [additional-information.md](./additional-information.md) for branch strategy, commit guidelines, and task execution rules.
 
 ## Individual Tasks
+
 - [Task 1: Project Initialization](./task-1-project-initialization.md)
 - [Task 2: Configure Development Environment](./task-2-development-environment.md)
 - [Task 3: Define Project Structure (DDD)](./task-3-project-structure.md)

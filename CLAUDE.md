@@ -3,6 +3,7 @@
 This plan outlines the development of a console-based Todo application in Node.js with TypeScript, following Domain-Driven Design (DDD), Test-Driven Development (TDD), abstracted I/O with dependency injection, a colorful console interface, JSON storage with flexibility for other formats (e.g., XML, CSV), and seamless code quality checks. Each task includes a confirmation step to ensure controlled progression.
 
 ## Tech Stack
+
 - **Node.js**: Runtime environment.
 - **TypeScript**: Superset of JavaScript for static typing.
 - **Jest**: Testing framework with `@types/jest` and `ts-jest` for TypeScript support.
@@ -21,6 +22,7 @@ This plan outlines the development of a console-based Todo application in Node.j
 - Always create correct branch like task instruct
 
 ## Key Considerations
+
 - **TypeScript**: Enhances type safety and maintainability.
 - **Validation Layer**: `TodoValidator` ensures Single Responsibility Principle and testability.
 - **Command Dispatcher**: Improves CLI extensibility and maintainability.
@@ -35,6 +37,7 @@ This plan outlines the development of a console-based Todo application in Node.j
 ## Git Commit Guidelines
 
 When creating git commits, follow these specific guidelines:
+
 - **DO NOT** add co-author information or mention who created the changes
 - **DO NOT** include lines like "Generated with [Claude Code]" or "Co-Authored-By: Claude"
 - Keep commit messages focused on the technical changes and their purpose

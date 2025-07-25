@@ -1,0 +1,1 @@
+if [ -d "src" ] && [ "$(find src -name '*.ts' | wc -l)" -gt 0 ]; then npm run lint; fi && npx prettier --check . && npm test -- --passWithNoTests

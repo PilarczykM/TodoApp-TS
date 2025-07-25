@@ -31,9 +31,10 @@ This plan outlines the development of a console-based Todo application in Node.j
 - **Storage Flexibility**: `TodoRepository` supports JSON and future formats.
 - **Colorful UI**: `ConsoleInterface` with `Chalk` and `Inquirer` ensures an appealing CLI.
 - **Confirmation Steps**: Each task requires confirmation to ensure controlled progression.
+
 ## Git Commit Guidelines
 
-## When creating git commits, follow these specific guidelines:
+When creating git commits, follow these specific guidelines:
 - **DO NOT** add co-author information or mention who created the changes
 - **DO NOT** include lines like "Generated with [Claude Code]" or "Co-Authored-By: Claude"
 - Keep commit messages focused on the technical changes and their purpose

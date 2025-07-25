@@ -1,6 +1,11 @@
-# Task 9: Define and Test ConsoleInterface (TDD)
+# Task 9: Define and Test TodoService (TDD)
 
-## 🔧 Additional Information
+- Write tests for `TodoService` (create, list, update, delete todos) in `tests/application/todoService.test.ts`, stubbing `TodoRepository`, `IdGenerator`, and `TodoValidator`.
+- Implement `TodoService` in `src/application/todoService.ts`, using dependency injection for `TodoRepository`, `IdGenerator`, and `TodoValidator`, and integrating `ErrorHandler`.
+- Refactor for type safety and clean orchestration.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +25,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Interface: `ConsoleInterface` with methods like `prompt()`, `display()`.
-- Write unit tests stubbing input/output.
-- Implement `InquirerConsole` using `chalk` and `inquirer`.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

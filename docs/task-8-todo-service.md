@@ -1,6 +1,11 @@
-# Task 8: Define and Test TodoService (TDD)
+# Task 8: Define and Test ErrorHandler Utility (TDD)
 
-## 🔧 Additional Information
+- Write tests for `ErrorHandler` (handling I/O, validation, and service errors) in `tests/application/errorHandler.test.ts`.
+- Define `ErrorHandler` interface and implement in `src/application/errorHandler.ts`, returning typed error objects (e.g., `{ code: string, message: string, details?: any }`).
+- Refactor for consistent error handling and TypeScript type safety.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +25,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Create `TodoService` with business orchestration (CRUD logic).
-- Inject `TodoRepository`, `IdGenerator`, `TodoValidator`.
-- Write tests mocking dependencies.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

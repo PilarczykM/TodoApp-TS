@@ -1,6 +1,12 @@
 # Task 5: Define and Test IdGenerator Interface (TDD)
 
-## 🔧 Additional Information
+- Write tests for `IdGenerator` interface (`generate(): string`) in `tests/infrastructure/idGenerator.test.ts`.
+- Define `IdGenerator` interface in `src/infrastructure/idGenerator.ts`.
+- Implement `UuidIdGenerator` using `uuid` in `src/infrastructure/uuidIdGenerator.ts`.
+- Refactor for type safety and flexibility.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +26,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Create interface for ID generation: `IdGenerator`.
-- Write unit tests in `tests/infrastructure/idGenerator.test.js`.
-- Implement `UuidIdGenerator` using `uuid`.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

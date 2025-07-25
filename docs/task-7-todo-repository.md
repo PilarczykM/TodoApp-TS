@@ -1,6 +1,12 @@
 # Task 7: Define and Test TodoRepository Interface (TDD)
 
-## 🔧 Additional Information
+- Write tests for `TodoRepository` interface (`save`, `findById`, `findAll`, `update`, `delete`) in `tests/infrastructure/todoRepository.test.ts`, stubbing `FileSystem`.
+- Define `TodoRepository` interface in `src/infrastructure/todoRepository.ts` with typed methods (e.g., `save(todo: Todo): Promise<void>`).
+- Implement `JsonTodoRepository` in `src/infrastructure/jsonTodoRepository.ts` using `FileSystem` to manage JSON files in `data/todos.json`.
+- Refactor for type safety and support for future storage formats (e.g., XML, CSV).
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +26,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Interface: `TodoRepository` with methods `save`, `findById`, `findAll`, `update`, `delete`.
-- Write tests stubbing `FileSystem`.
-- Implement `JsonTodoRepository` using `FileSystem` and JSON file.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

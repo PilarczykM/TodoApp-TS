@@ -1,6 +1,11 @@
 # Task 11: Test End-to-End Functionality (TDD)
 
-## 🔧 Additional Information
+- Write integration tests in `tests/integration` for happy paths (CRUD operations) and error scenarios (e.g., corrupted JSON, invalid input, service failures), stubbing `FileSystem`.
+- Implement glue code to pass integration tests, using `ErrorHandler` for structured error reporting.
+- Refactor for performance, readability, and type safety.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +25,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Write integration tests connecting `cli` → `service` → `repository`.
-- Simulate edge cases (e.g., file errors, invalid input).
-- Implement basic `ErrorHandler` in `src/shared/errorHandler.js` to catch and report errors.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

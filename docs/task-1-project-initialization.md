@@ -1,6 +1,11 @@
 # Task 1: Project Initialization
 
-## 🔧 Additional Information
+- Initialize a project with `npm init -y`.
+- Install dependencies: TypeScript, Jest, `ts-jest`, `@types/jest`, ESLint, `@typescript-eslint/parser`, `@typescript-eslint/eslint-plugin`, Prettier, Husky, Chalk, `@types/chalk`, Inquirer, `@types/inquirer`, fs-extra, `@types/fs-extra`, uuid, `@types/uuid`, nodemon, ts-node.
+- Initialize TypeScript with `npx tsc --init`, configuring `tsconfig.json` for ES modules, strict type checking, and output to a `dist` directory.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +25,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Create project directory (`todo-app`), run `npm init -y`.
-- Install dependencies: `chalk`, `inquirer`, `fs-extra`, `uuid`, `jest`, `eslint`, `prettier`, `husky`, `nodemon`.
-- Set up `.gitignore` and initial Git repo.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

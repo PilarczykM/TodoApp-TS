@@ -1,6 +1,10 @@
 # Task 16: Finalize and Document
 
-## 🔧 Additional Information
+- Compile TypeScript to JavaScript (`npm run build`) and package as a standalone CLI tool, optionally publishing to npm.
+- Finalize `README.md` with usage examples, installation steps, TypeScript setup, and contributor guidelines, highlighting `TodoValidator`, `CommandDispatcher`, and `ErrorHandler`.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +24,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Polish `README.md`: setup, usage, commands, architecture overview.
-- Add "Contributing" guide.
-- Optional: Package CLI with bin entry in `package.json`.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

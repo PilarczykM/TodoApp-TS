@@ -1,6 +1,15 @@
-# Task 3: Define Project Structure (DDD Layout)
+# Task 3: Define Project Structure (DDD)
 
-## 🔧 Additional Information
+- Create a DDD-based folder structure:
+  - `src/domain`: `Todo` entity and `TodoValidator` service (`.ts` files).
+  - `src/application`: `TodoService` and `ErrorHandler` utility (`.ts` files).
+  - `src/infrastructure`: File system, storage, and ID generation (`.ts` files).
+  - `src/interfaces`: CLI and `CommandDispatcher` (`.ts` files).
+  - `tests`: Unit and integration tests (`.test.ts` files).
+  - `data`: Storage for JSON files.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,18 +29,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Create the following folders:
-  - `src/domain`
-  - `src/application`
-  - `src/infrastructure`
-  - `src/interfaces`
-  - `src/shared`
-  - `tests/`
-  - `data/`
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

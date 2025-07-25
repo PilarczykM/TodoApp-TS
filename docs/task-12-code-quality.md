@@ -1,6 +1,12 @@
 # Task 12: Enhance Code Quality Checks
 
-## 🔧 Additional Information
+- Configure ESLint with `@typescript-eslint` for TypeScript-specific rules.
+- Set up Prettier for auto-formatting on save.
+- Configure Husky to run `eslint`, `prettier --check`, and `jest` before commits.
+- Add CI configuration (e.g., GitHub Actions) to run tests and linting on push.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,14 +26,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Confirm ESLint rules are enforced across all files.
-- Enable auto-formatting via Prettier on save.
-- Ensure Husky blocks commits with lint/test failures.
-- Run coverage reports with Jest.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

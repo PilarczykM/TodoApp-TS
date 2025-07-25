@@ -1,6 +1,13 @@
-# Task 4: Define and Test Todo Entity (TDD)
+# Task 4: Define and Test Todo Entity and Validator (TDD)
 
-## 🔧 Additional Information
+- Write tests for the `Todo` entity (creation, immutability, status updates) in `tests/domain/todo.test.ts`, using TypeScript interfaces.
+- Define `Todo` interface and implement `Todo` class in `src/domain/todo.ts` with properties: `id: string`, `title: string`, `description: string`, `status: 'pending' | 'completed'`.
+- Write tests for `TodoValidator` (non-empty title, valid status transitions) in `tests/domain/todoValidator.test.ts`.
+- Implement `TodoValidator` in `src/domain/todoValidator.ts` as a domain service with typed inputs/outputs.
+- Refactor for clean code and type safety.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,14 +27,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Write unit tests for `Todo` entity (create, update status).
-- Implement `Todo` in `src/domain/todo.js`.
-- Create `TodoValidator` in `src/domain/todoValidator.js` to encapsulate validation logic.
-- Write unit tests for `TodoValidator`.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

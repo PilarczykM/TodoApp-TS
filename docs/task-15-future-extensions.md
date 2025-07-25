@@ -1,6 +1,11 @@
 # Task 15: Prepare for Future Extensions
 
-## 🔧 Additional Information
+- Validate abstractions (`FileSystem`, `IdGenerator`, `TodoRepository`, `ConsoleInterface`) support swapping implementations.
+- Document in `README.md` how to extend `TodoValidator` (new rules), `CommandDispatcher` (new commands), `ErrorHandler` (custom error types), and TypeScript interfaces.
+- Outline steps for implementing new storage formats (e.g., XML, CSV).
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,16 +25,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Document how to:
-  - Replace `FileSystem` (e.g., XML)
-  - Swap `ConsoleInterface` or `IdGenerator`
-  - Add new commands via `CommandDispatcher`
-  - Extend validation rules
-- Confirm interfaces make future migrations easy.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

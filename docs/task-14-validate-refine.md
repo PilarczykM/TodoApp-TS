@@ -1,6 +1,13 @@
 # Task 14: Validate and Refine
 
-## 🔧 Additional Information
+- Run all tests to ensure 100% coverage for critical paths.
+- Verify linting and formatting with `npm run lint` and `npm run format`.
+- Test CLI with real-world scenarios (e.g., add 10 todos, update 5, delete 3, simulate errors).
+- Confirm Husky blocks commits with failing tests or linting errors.
+- Verify TypeScript type checking with `tsc --noEmit`.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +27,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Run full suite: lint, format, test, coverage.
-- Test real-world scenarios (create 10 todos, delete 3, update 2).
-- Check for clean CLI output, color usage, proper command flow.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

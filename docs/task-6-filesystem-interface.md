@@ -1,6 +1,12 @@
 # Task 6: Define and Test FileSystem Interface (TDD)
 
-## 🔧 Additional Information
+- Write tests for `FileSystem` interface (`readFile`, `writeFile`, `ensureDir`) in `tests/infrastructure/fileSystem.test.ts`, stubbing file operations.
+- Define `FileSystem` interface in `src/infrastructure/fileSystem.ts` with typed methods (e.g., `readFile(path: string): Promise<string>`).
+- Implement `FsExtraFileSystem` using `fs-extra` in `src/infrastructure/fsExtraFileSystem.ts`.
+- Refactor for flexibility and TypeScript compliance.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +26,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Create a `FileSystem` interface with methods: `readFile`, `writeFile`, `ensureDir`.
-- Write tests using mocks/stubs.
-- Implement `FsExtraFileSystem` using `fs-extra`.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

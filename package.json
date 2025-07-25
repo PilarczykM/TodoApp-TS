@@ -1,0 +1,63 @@
+{
+  "name": "todoapp-ts",
+  "version": "1.0.0",
+  "description": "[![CI](https://github.com/marcinpilarczyk/TodoApp-TS/actions/workflows/ci.yml/badge.svg)](https://github.com/marcinpilarczyk/TodoApp-TS/actions/workflows/ci.yml)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PilarczykM/TodoApp-TS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PilarczykM/TodoApp-TS/issues"
+  },
+  "homepage": "https://github.com/PilarczykM/TodoApp-TS#readme",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "fs-extra": "^11.3.0",
+    "inquirer": "^12.8.2",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/chalk": "^0.4.31",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.8",
+    "@types/jest": "^30.0.0",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.31.0",
+    "husky": "^9.1.7",
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/src"],
+    "testMatch": ["**/__tests__/**/*.ts", "**/?(*.)+(spec|test).ts"],
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts"
+    ]
+  }
+}

@@ -1,6 +1,10 @@
 # Task 13: Optimize Developer Experience
 
-## 🔧 Additional Information
+- Use `nodemon` with `ts-node` for auto-restarting during development (`npm run dev`).
+- Create `README.md` with setup instructions, CLI command examples, TDD/DDD guidelines, TypeScript usage, and details on `TodoValidator`, `CommandDispatcher`, and `ErrorHandler`.
+- **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**
+
+# 🔧 Additional Information
 
 **Branch Strategy**:
 - Use conventional branch naming:
@@ -20,13 +24,3 @@
 - **⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK** (after each major task)
 - Always follow TDD strategy. (Test, Code, Refactor)!
 - Run relevant tests after completing each subtask to ensure stability
-
----
-
-## Task Details
-
-- Use `nodemon` for local development.
-- Add `.env` support if needed for file paths/configs.
-- Add logging or debug mode toggle if applicable.
-
-**⚠️ WAIT FOR CONFIRMATION BEFORE PROCEEDING TO NEXT TASK**

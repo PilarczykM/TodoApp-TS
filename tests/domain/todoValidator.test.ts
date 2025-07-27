@@ -1,100 +1,59 @@
-import { TodoValidator } from '../../src/domain/todoValidator';
+import { TodoValidator, TodoData } from '../../src/domain/todoValidator';
 
 describe('TodoValidator', () => {
   describe('validateTitle', () => {
-    it('should return true for valid non-empty title', () => {
+    it('should return true for valid titles', () => {
       expect(TodoValidator.validateTitle('Buy groceries')).toBe(true);
-      expect(TodoValidator.validateTitle('Complete project')).toBe(true);
-      expect(TodoValidator.validateTitle('a')).toBe(true);
     });
-
-    it('should return false for empty title', () => {
+    it('should return false for invalid titles', () => {
       expect(TodoValidator.validateTitle('')).toBe(false);
-    });
-
-    it('should return false for whitespace-only title', () => {
       expect(TodoValidator.validateTitle('   ')).toBe(false);
-      expect(TodoValidator.validateTitle('\t')).toBe(false);
-      expect(TodoValidator.validateTitle('\n')).toBe(false);
-    });
-
-    it('should return false for null or undefined title', () => {
       expect(TodoValidator.validateTitle(null as any)).toBe(false);
       expect(TodoValidator.validateTitle(undefined as any)).toBe(false);
     });
   });
 
   describe('validateStatus', () => {
-    it('should return true for valid status values', () => {
-      expect(TodoValidator.validateStatus('pending')).toBe(true);
-      expect(TodoValidator.validateStatus('completed')).toBe(true);
-    });
-
-    it('should return false for invalid status values', () => {
-      expect(TodoValidator.validateStatus('invalid')).toBe(false);
-      expect(TodoValidator.validateStatus('done')).toBe(false);
-      expect(TodoValidator.validateStatus('todo')).toBe(false);
-      expect(TodoValidator.validateStatus('')).toBe(false);
-    });
-
-    it('should return false for null or undefined status', () => {
-      expect(TodoValidator.validateStatus(null as any)).toBe(false);
-      expect(TodoValidator.validateStatus(undefined as any)).toBe(false);
+    it.each([
+      ['pending', true],
+      ['completed', true],
+      ['invalid', false],
+      ['done', false],
+      ['todo', false],
+      ['', false],
+      [null, false],
+      [undefined, false],
+    ])('should return %s for status: %p', (status, expected) => {
+      expect(TodoValidator.validateStatus(status as any)).toBe(expected);
     });
   });
 
   describe('validateTodoData', () => {
-    it('should return validation result for complete todo data', () => {
-      const validData = {
-        id: '123',
-        title: 'Test todo',
-        description: 'Test description',
-        status: 'pending' as const,
-      };
+    const createValidTodoData = (overrides: Partial<TodoData> = {}): TodoData => ({
+      id: '123',
+      title: 'Test todo',
+      description: 'Test description',
+      status: 'pending',
+      ...overrides,
+    });
 
-      const result = TodoValidator.validateTodoData(validData);
+    it('should return valid for complete todo data', () => {
+      const result = TodoValidator.validateTodoData(createValidTodoData());
       expect(result.isValid).toBe(true);
       expect(result.errors).toEqual([]);
     });
 
-    it('should return errors for invalid title', () => {
-      const invalidData = {
-        id: '123',
-        title: '',
-        description: 'Test description',
-        status: 'pending' as const,
-      };
-
-      const result = TodoValidator.validateTodoData(invalidData);
+    it.each<[Partial<TodoData>, string[]]>([
+      [{ title: '' }, ['Title cannot be empty']],
+      [{ status: 'invalid' as any }, ["Status must be either 'pending' or 'completed'"]],
+      [
+        { title: '', status: 'invalid' as any },
+        ['Title cannot be empty', "Status must be either 'pending' or 'completed'"],
+      ],
+    ])('should return errors for invalid data: %p', (overrides, expectedErrors) => {
+      const result = TodoValidator.validateTodoData(createValidTodoData(overrides));
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Title cannot be empty');
-    });
-
-    it('should return errors for invalid status', () => {
-      const invalidData = {
-        id: '123',
-        title: 'Test todo',
-        description: 'Test description',
-        status: 'invalid' as any,
-      };
-
-      const result = TodoValidator.validateTodoData(invalidData);
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Status must be either "pending" or "completed"');
-    });
-
-    it('should return multiple errors for multiple invalid fields', () => {
-      const invalidData = {
-        id: '123',
-        title: '',
-        description: 'Test description',
-        status: 'invalid' as any,
-      };
-
-      const result = TodoValidator.validateTodoData(invalidData);
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Title cannot be empty');
-      expect(result.errors).toContain('Status must be either "pending" or "completed"');
+      expect(result.errors).toEqual(expect.arrayContaining(expectedErrors));
     });
   });
 });

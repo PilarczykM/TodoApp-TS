@@ -19,8 +19,8 @@ export class TodoValidator {
     return typeof title === 'string' && title.trim().length > 0;
   }
 
-  static validateStatus(status: string): boolean {
-    return typeof status === 'string' && this.VALID_STATUSES.includes(status as TodoStatus);
+  static validateStatus(status: string): status is TodoStatus {
+    return this.VALID_STATUSES.includes(status as TodoStatus);
   }
 
   static validateTodoData(data: TodoData): ValidationResult {

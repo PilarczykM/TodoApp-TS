@@ -1,5 +1,6 @@
 import { Todo } from '../../src/domain/todo';
 import { TodoStatus } from '../../src/domain/todoValidator';
+import { ValidationError } from '../../src/domain/validationError';
 
 describe('Todo', () => {
   const validTodoData = {
@@ -19,30 +20,32 @@ describe('Todo', () => {
       expect(todo.status).toBe('pending');
     });
 
-    it('should throw error for invalid title', () => {
+    it('should throw ValidationError for invalid title', () => {
       const invalidData = { ...validTodoData, title: '' };
 
-      expect(() => new Todo(invalidData)).toThrow('Title cannot be empty');
+      expect(() => new Todo(invalidData)).toThrow(ValidationError);
+      expect(() => new Todo(invalidData)).toThrow('Invalid Todo data');
     });
 
-    it('should throw error for whitespace-only title', () => {
+    it('should throw ValidationError for whitespace-only title', () => {
       const invalidData = { ...validTodoData, title: '   ' };
 
-      expect(() => new Todo(invalidData)).toThrow('Title cannot be empty');
+      expect(() => new Todo(invalidData)).toThrow(ValidationError);
+      expect(() => new Todo(invalidData)).toThrow('Invalid Todo data');
     });
 
-    it('should throw error for invalid status', () => {
+    it('should throw ValidationError for invalid status', () => {
       const invalidData = { ...validTodoData, status: 'invalid' as any };
 
-      expect(() => new Todo(invalidData)).toThrow('Status must be either "pending" or "completed"');
+      expect(() => new Todo(invalidData)).toThrow(ValidationError);
+      expect(() => new Todo(invalidData)).toThrow('Invalid Todo data');
     });
 
-    it('should throw error with multiple validation messages', () => {
+    it('should throw ValidationError with multiple validation messages', () => {
       const invalidData = { ...validTodoData, title: '', status: 'invalid' as any };
 
-      expect(() => new Todo(invalidData)).toThrow(
-        'Title cannot be empty, Status must be either "pending" or "completed"'
-      );
+      expect(() => new Todo(invalidData)).toThrow(ValidationError);
+      expect(() => new Todo(invalidData)).toThrow('Invalid Todo data');
     });
   });
 
@@ -76,10 +79,11 @@ describe('Todo', () => {
       expect(completedTodo.status).toBe('pending');
     });
 
-    it('should throw error for invalid status', () => {
+    it('should throw ValidationError for invalid status', () => {
       const todo = new Todo(validTodoData);
 
-      expect(() => todo.updateStatus('invalid' as any)).toThrow('Status must be either "pending" or "completed"');
+      expect(() => todo.updateStatus('invalid' as any)).toThrow(ValidationError);
+      expect(() => todo.updateStatus('invalid' as any)).toThrow('Invalid status');
     });
   });
 

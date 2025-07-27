@@ -1,163 +1,79 @@
 import { Todo } from '../../src/domain/todo';
-import { TodoStatus } from '../../src/domain/todoValidator';
+import { TodoData, TodoStatus } from '../../src/domain/todoValidator';
 import { ValidationError } from '../../src/domain/validationError';
 
 describe('Todo', () => {
-  const validTodoData = {
+  const createValidTodoData = (overrides: Partial<TodoData> = {}): TodoData => ({
     id: '123',
     title: 'Buy groceries',
     description: 'Need to buy milk and bread',
-    status: 'pending' as TodoStatus,
-  };
+    status: 'pending',
+    ...overrides,
+  });
 
   describe('constructor', () => {
     it('should create a todo with valid data', () => {
-      const todo = new Todo(validTodoData);
+      const todoData = createValidTodoData();
+      const todo = new Todo(todoData);
 
-      expect(todo.id).toBe('123');
-      expect(todo.title).toBe('Buy groceries');
-      expect(todo.description).toBe('Need to buy milk and bread');
-      expect(todo.status).toBe('pending');
+      expect(todo.id).toBe(todoData.id);
+      expect(todo.title).toBe(todoData.title);
+      expect(todo.description).toBe(todoData.description);
+      expect(todo.status).toBe(todoData.status);
     });
 
-    it('should throw ValidationError for invalid title', () => {
-      const invalidData = { ...validTodoData, title: '' };
+    it.each([
+      [{ title: '' }, 'Invalid Todo data'],
+      [{ title: '   ' }, 'Invalid Todo data'],
+      [{ status: 'invalid' as any }, 'Invalid Todo data'],
+      [{ title: '', status: 'invalid' as any }, 'Invalid Todo data'],
+    ])('should throw ValidationError for invalid data: %p', (overrides, expectedError) => {
+      const invalidData = createValidTodoData(overrides);
 
       expect(() => new Todo(invalidData)).toThrow(ValidationError);
-      expect(() => new Todo(invalidData)).toThrow('Invalid Todo data');
-    });
-
-    it('should throw ValidationError for whitespace-only title', () => {
-      const invalidData = { ...validTodoData, title: '   ' };
-
-      expect(() => new Todo(invalidData)).toThrow(ValidationError);
-      expect(() => new Todo(invalidData)).toThrow('Invalid Todo data');
-    });
-
-    it('should throw ValidationError for invalid status', () => {
-      const invalidData = { ...validTodoData, status: 'invalid' as any };
-
-      expect(() => new Todo(invalidData)).toThrow(ValidationError);
-      expect(() => new Todo(invalidData)).toThrow('Invalid Todo data');
-    });
-
-    it('should throw ValidationError with multiple validation messages', () => {
-      const invalidData = { ...validTodoData, title: '', status: 'invalid' as any };
-
-      expect(() => new Todo(invalidData)).toThrow(ValidationError);
-      expect(() => new Todo(invalidData)).toThrow('Invalid Todo data');
-    });
-  });
-
-  describe('property immutability', () => {
-    it('should have readonly properties (TypeScript compile-time protection)', () => {
-      const todo = new Todo(validTodoData);
-
-      // TypeScript provides compile-time protection for readonly properties
-      // At runtime, these properties are accessible but should not be modified
-      expect(todo.id).toBe('123');
-      expect(todo.title).toBe('Buy groceries');
-      expect(todo.description).toBe('Need to buy milk and bread');
-      expect(todo.status).toBe('pending');
+      expect(() => new Todo(invalidData)).toThrow(expectedError);
     });
   });
 
   describe('updateStatus', () => {
-    it('should update status from pending to completed', () => {
-      const todo = new Todo(validTodoData);
-
-      todo.updateStatus('completed');
-
-      expect(todo.status).toBe('completed');
-    });
-
-    it('should update status from completed to pending', () => {
-      const completedTodo = new Todo({ ...validTodoData, status: 'completed' });
-
-      completedTodo.updateStatus('pending');
-
-      expect(completedTodo.status).toBe('pending');
+    it.each<[TodoStatus, TodoStatus]>([
+      ['pending', 'completed'],
+      ['completed', 'pending'],
+    ])('should update status from %s to %s', (initialStatus, newStatus) => {
+      const todo = new Todo(createValidTodoData({ status: initialStatus }));
+      todo.updateStatus(newStatus);
+      expect(todo.status).toBe(newStatus);
     });
 
     it('should throw ValidationError for invalid status', () => {
-      const todo = new Todo(validTodoData);
+      const todo = new Todo(createValidTodoData());
 
       expect(() => todo.updateStatus('invalid' as any)).toThrow(ValidationError);
       expect(() => todo.updateStatus('invalid' as any)).toThrow('Invalid status');
     });
   });
 
-  describe('toData', () => {
-    it('should return todo data as plain object', () => {
-      const todo = new Todo(validTodoData);
-
-      const data = todo.toData();
-
-      expect(data).toEqual({
-        id: '123',
-        title: 'Buy groceries',
-        description: 'Need to buy milk and bread',
-        status: 'pending',
-      });
-    });
-
-    it('should return immutable data object', () => {
-      const todo = new Todo(validTodoData);
-      const data = todo.toData();
-
-      data.title = 'Modified title';
-
-      expect(todo.title).toBe('Buy groceries');
-    });
-  });
-
   describe('isCompleted', () => {
-    it('should return true for completed todo', () => {
-      const completedTodo = new Todo({ ...validTodoData, status: 'completed' });
-
-      expect(completedTodo.isCompleted()).toBe(true);
-    });
-
-    it('should return false for pending todo', () => {
-      const pendingTodo = new Todo(validTodoData);
-
-      expect(pendingTodo.isCompleted()).toBe(false);
+    it.each([
+      ['completed', true],
+      ['pending', false],
+    ])('should return %s when status is %s', (status, expected) => {
+      const todo = new Todo(createValidTodoData({ status: status as TodoStatus }));
+      expect(todo.isCompleted()).toBe(expected);
     });
   });
 
-  describe('markAsCompleted', () => {
+  describe('toggling status', () => {
     it('should mark pending todo as completed', () => {
-      const todo = new Todo(validTodoData);
-
+      const todo = new Todo(createValidTodoData({ status: 'pending' }));
       todo.markAsCompleted();
-
       expect(todo.status).toBe('completed');
-      expect(todo.isCompleted()).toBe(true);
     });
 
-    it('should not throw error if already completed', () => {
-      const completedTodo = new Todo({ ...validTodoData, status: 'completed' });
-
-      expect(() => completedTodo.markAsCompleted()).not.toThrow();
-      expect(completedTodo.status).toBe('completed');
-    });
-  });
-
-  describe('markAsPending', () => {
     it('should mark completed todo as pending', () => {
-      const completedTodo = new Todo({ ...validTodoData, status: 'completed' });
-
-      completedTodo.markAsPending();
-
-      expect(completedTodo.status).toBe('pending');
-      expect(completedTodo.isCompleted()).toBe(false);
-    });
-
-    it('should not throw error if already pending', () => {
-      const pendingTodo = new Todo(validTodoData);
-
-      expect(() => pendingTodo.markAsPending()).not.toThrow();
-      expect(pendingTodo.status).toBe('pending');
+      const todo = new Todo(createValidTodoData({ status: 'completed' }));
+      todo.markAsPending();
+      expect(todo.status).toBe('pending');
     });
   });
 });

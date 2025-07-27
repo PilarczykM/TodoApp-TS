@@ -1,5 +1,6 @@
 import { Todo } from '../../src/domain/todo';
-import { TodoData, TodoStatus } from '../../src/domain/todoValidator';
+import { TodoData } from '../../src/domain/todoValidator';
+import { TodoStatus } from '../../src/domain/types';
 import { ValidationError } from '../../src/domain/validationError';
 
 describe('Todo', () => {

@@ -45,10 +45,10 @@ describe('TodoValidator', () => {
 
     it.each<[Partial<TodoData>, string[]]>([
       [{ title: '' }, ['Title cannot be empty']],
-      [{ status: 'invalid' as any }, ['Status must be either "pending" or "completed"']],
+      [{ status: 'invalid' as any }, ["Status must be either 'pending' or 'completed'"]],
       [
         { title: '', status: 'invalid' as any },
-        ['Title cannot be empty', 'Status must be either "pending" or "completed"'],
+        ['Title cannot be empty', "Status must be either 'pending' or 'completed'"],
       ],
     ])('should return errors for invalid data: %p', (overrides, expectedErrors) => {
       const result = TodoValidator.validateTodoData(createValidTodoData(overrides));

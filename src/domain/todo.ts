@@ -1,5 +1,6 @@
-import { TodoValidator, TodoStatus, TodoData } from './todoValidator';
-import { ValidationError } from './validationError';
+import { TodoValidator, TodoData } from './todoValidator';
+import { TodoStatus } from './types';
+import { INVALID_TODO_DATA_MESSAGE, INVALID_TODO_STATUS_MESSAGE, ValidationError } from './validationError';
 
 export interface ITodo {
   readonly id: string;
@@ -18,7 +19,7 @@ export class Todo implements ITodo {
     const validationResult = TodoValidator.validateTodoData(data);
 
     if (!validationResult.isValid) {
-      throw new ValidationError('Invalid Todo data', validationResult.errors);
+      throw new ValidationError(INVALID_TODO_DATA_MESSAGE, validationResult.errors);
     }
 
     this.id = data.id;
@@ -33,7 +34,7 @@ export class Todo implements ITodo {
 
   updateStatus(newStatus: TodoStatus): void {
     if (!TodoValidator.validateStatus(newStatus)) {
-      throw new ValidationError('Invalid status', ["Status must be either 'pending' or 'completed'"]);
+      throw new ValidationError('Invalid status', [INVALID_TODO_STATUS_MESSAGE]);
     }
     this._status = newStatus;
   }

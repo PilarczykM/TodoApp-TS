@@ -1,4 +1,3 @@
-
 import { UuidIdGenerator } from '../../src/infrastructure/uuidIdGenerator';
 
 describe('UuidIdGenerator', () => {

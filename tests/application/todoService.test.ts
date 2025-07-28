@@ -1,4 +1,4 @@
-import { TodoService, ServiceResult, CreateTodoInput } from '../../src/application/TodoService';
+import { TodoService, ServiceResult, CreateTodoInput, UpdateTodoInput } from '../../src/application/TodoService';
 import { TodoRepository } from '../../src/interfaces/infrastructure/TodoRepository';
 import { IdGenerator } from '../../src/interfaces/infrastructure/IdGenerator';
 import { TodoValidator } from '../../src/domain/todoValidator';
@@ -156,6 +156,90 @@ describe('TodoService', () => {
       expect(result.data).toEqual([]);
       expect(result.data).toHaveLength(0);
       expect(result.error).toBeUndefined();
+    });
+  });
+
+  describe('updateTodo', () => {
+    let todoService: TodoService;
+
+    beforeEach(() => {
+      todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
+    });
+
+    it('should update an existing todo successfully', async () => {
+      const existingTodo = new Todo({
+        id: '1',
+        title: 'Original Title',
+        description: 'Original Description',
+        status: 'pending' as TodoStatus,
+      });
+
+      const updateInput: UpdateTodoInput = {
+        title: 'Updated Title',
+        description: 'Updated Description',
+        status: 'completed' as TodoStatus,
+      };
+
+      mockTodoRepository.findById.mockResolvedValue(existingTodo);
+      mockTodoRepository.update.mockResolvedValue();
+
+      const result = await todoService.updateTodo('1', updateInput);
+
+      expect(result.success).toBe(true);
+      expect(result.data).toBeDefined();
+      expect(result.data?.id).toBe('1');
+      expect(result.data?.title).toBe('Updated Title');
+      expect(result.data?.description).toBe('Updated Description');
+      expect(result.data?.status).toBe('completed');
+      expect(result.error).toBeUndefined();
+      expect(mockTodoRepository.findById).toHaveBeenCalledWith('1');
+      expect(mockTodoRepository.update).toHaveBeenCalledWith(expect.any(Todo));
+    });
+
+    it('should return error when todo is not found', async () => {
+      const updateInput: UpdateTodoInput = {
+        title: 'Updated Title',
+      };
+
+      mockTodoRepository.findById.mockResolvedValue(null);
+
+      const result = await todoService.updateTodo('nonexistent-id', updateInput);
+
+      expect(result.success).toBe(false);
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBe('Todo not found');
+      expect(mockTodoRepository.findById).toHaveBeenCalledWith('nonexistent-id');
+      expect(mockTodoRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should handle validation errors when updating todo', async () => {
+      const existingTodo = new Todo({
+        id: '1',
+        title: 'Original Title',
+        description: 'Original Description',
+        status: 'pending' as TodoStatus,
+      });
+
+      const updateInput: UpdateTodoInput = {
+        title: '', // Invalid empty title
+      };
+
+      mockTodoRepository.findById.mockResolvedValue(existingTodo);
+
+      const errorResult: ErrorResult = {
+        code: 'VALIDATION_ERROR',
+        message: 'Invalid Todo data',
+        details: { errors: ['Title cannot be empty'] },
+      };
+      mockErrorHandler.handleError.mockReturnValue(errorResult);
+
+      const result = await todoService.updateTodo('1', updateInput);
+
+      expect(result.success).toBe(false);
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBe('Invalid Todo data');
+      expect(mockErrorHandler.handleError).toHaveBeenCalledWith(expect.any(ValidationError));
+      expect(mockTodoRepository.update).not.toHaveBeenCalled();
     });
   });
 });

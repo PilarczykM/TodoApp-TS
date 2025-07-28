@@ -16,6 +16,12 @@ export type CreateTodoInput = {
   status: TodoStatus;
 };
 
+export type UpdateTodoInput = {
+  title?: string;
+  description?: string;
+  status?: TodoStatus;
+};
+
 export class TodoService {
   constructor(
     private readonly todoRepository: TodoRepository,
@@ -50,6 +56,34 @@ export class TodoService {
       return {
         success: true,
         data: todos,
+      };
+    } catch (error) {
+      return this.handleServiceError(error);
+    }
+  }
+
+  async updateTodo(id: string, updates: UpdateTodoInput): Promise<ServiceResult<Todo>> {
+    try {
+      const existingTodo = await this.todoRepository.findById(id);
+      if (!existingTodo) {
+        return {
+          success: false,
+          error: 'Todo not found',
+        };
+      }
+
+      const updatedTodo = new Todo({
+        id: existingTodo.id,
+        title: updates.title ?? existingTodo.title,
+        description: updates.description ?? existingTodo.description,
+        status: updates.status ?? existingTodo.status,
+      });
+
+      await this.todoRepository.update(updatedTodo);
+
+      return {
+        success: true,
+        data: updatedTodo,
       };
     } catch (error) {
       return this.handleServiceError(error);

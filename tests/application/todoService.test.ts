@@ -242,4 +242,71 @@ describe('TodoService', () => {
       expect(mockTodoRepository.update).not.toHaveBeenCalled();
     });
   });
+
+  describe('deleteTodo', () => {
+    let todoService: TodoService;
+
+    beforeEach(() => {
+      todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
+    });
+
+    it('should delete an existing todo successfully', async () => {
+      const existingTodo = new Todo({
+        id: '1',
+        title: 'Todo to delete',
+        description: 'Description',
+        status: 'pending' as TodoStatus,
+      });
+
+      mockTodoRepository.findById.mockResolvedValue(existingTodo);
+      mockTodoRepository.delete.mockResolvedValue();
+
+      const result = await todoService.deleteTodo('1');
+
+      expect(result.success).toBe(true);
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeUndefined();
+      expect(mockTodoRepository.findById).toHaveBeenCalledWith('1');
+      expect(mockTodoRepository.delete).toHaveBeenCalledWith('1');
+    });
+
+    it('should return error when todo to delete is not found', async () => {
+      mockTodoRepository.findById.mockResolvedValue(null);
+
+      const result = await todoService.deleteTodo('nonexistent-id');
+
+      expect(result.success).toBe(false);
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBe('Todo not found');
+      expect(mockTodoRepository.findById).toHaveBeenCalledWith('nonexistent-id');
+      expect(mockTodoRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('should handle repository errors during deletion', async () => {
+      const existingTodo = new Todo({
+        id: '1',
+        title: 'Todo to delete',
+        description: 'Description',
+        status: 'pending' as TodoStatus,
+      });
+
+      const repositoryError = new Error('Database deletion failed');
+      mockTodoRepository.findById.mockResolvedValue(existingTodo);
+      mockTodoRepository.delete.mockRejectedValue(repositoryError);
+
+      const errorResult: ErrorResult = {
+        code: 'SERVICE_ERROR',
+        message: 'Database deletion failed',
+        details: { originalError: 'Database deletion failed' },
+      };
+      mockErrorHandler.handleError.mockReturnValue(errorResult);
+
+      const result = await todoService.deleteTodo('1');
+
+      expect(result.success).toBe(false);
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBe('Database deletion failed');
+      expect(mockErrorHandler.handleError).toHaveBeenCalledWith(repositoryError);
+    });
+  });
 });

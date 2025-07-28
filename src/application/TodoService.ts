@@ -90,6 +90,26 @@ export class TodoService {
     }
   }
 
+  async deleteTodo(id: string): Promise<ServiceResult<void>> {
+    try {
+      const existingTodo = await this.todoRepository.findById(id);
+      if (!existingTodo) {
+        return {
+          success: false,
+          error: 'Todo not found',
+        };
+      }
+
+      await this.todoRepository.delete(id);
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      return this.handleServiceError(error);
+    }
+  }
+
   private handleServiceError<T>(error: unknown): ServiceResult<T> {
     const errorResult = this.errorHandler.handleError(error);
     return {

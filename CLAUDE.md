@@ -45,27 +45,31 @@ When creating git commits, follow these specific guidelines:
 - Include detailed explanations of features, requirements satisfied, and testing done
 
 ## Clean Code Philosophy (READ FIRST)
+
 **EVERY LINE OF CODE IS A LIABILITY. The best code is no code.**
-* **DRY (Don't Repeat Yourself)**: If you write it twice, you're doing it wrong
-* **YAGNI (You Ain't Gonna Need It)**: Build only what's needed NOW
-* **KISS (Keep It Simple, Stupid)**: Complexity is the enemy of maintainability
-* **Less is More**: Prefer 10 lines that are clear over 100 that are clever
-* **Code is Read 10x More Than Written**: Optimize for readability
-* **Self-Documenting Code**: Code should explain itself; comments only for "why", not "what". Variable names should ALWAYS be clear and descriptive, even in inline map/filter functions.
-* **Use pure functions by default**; introduce a class only for shared mutable state or real polymorphism.
-* **Compose > Inherit** — build features by combining small functions/objects instead of subclass trees.
-* Start with interface / type; add a class only when behaviour + state demand runtime instances.
-* Flag any module>200 LOC or class>5 public methods as a “god object” to be split.
-* Keep FP readable: short map/filter chains fine; avoid nested, point‑free puzzles.
+
+- **DRY (Don't Repeat Yourself)**: If you write it twice, you're doing it wrong
+- **YAGNI (You Ain't Gonna Need It)**: Build only what's needed NOW
+- **KISS (Keep It Simple, Stupid)**: Complexity is the enemy of maintainability
+- **Less is More**: Prefer 10 lines that are clear over 100 that are clever
+- **Code is Read 10x More Than Written**: Optimize for readability
+- **Self-Documenting Code**: Code should explain itself; comments only for "why", not "what". Variable names should ALWAYS be clear and descriptive, even in inline map/filter functions.
+- **Use pure functions by default**; introduce a class only for shared mutable state or real polymorphism.
+- **Compose > Inherit** — build features by combining small functions/objects instead of subclass trees.
+- Start with interface / type; add a class only when behaviour + state demand runtime instances.
+- Flag any module>200 LOC or class>5 public methods as a “god object” to be split.
+- Keep FP readable: short map/filter chains fine; avoid nested, point‑free puzzles.
 
 # Development Guidelines for Claude
 
 ## CORE PRINCIPLE: TEST-DRIVEN DEVELOPMENT IS MANDATORY
+
 **Every line of production code must be written in response to a failing test. No exceptions.**
 
 ## Quick Reference (MEMORIZE THIS)
 
 ### Must Do:
+
 - Write test first (RED) → Minimal code to pass (GREEN) → Refactor if valuable
 - Test behavior, not implementation
 - Use TypeScript strict mode (no `any`, no type assertions)
@@ -74,6 +78,7 @@ When creating git commits, follow these specific guidelines:
 - Update CLAUDE.md with learnings after each session
 
 ### Never Do:
+
 - Write production code without a failing test
 - Test implementation details
 - Add comments (code must be self-documenting)
@@ -90,10 +95,11 @@ When creating git commits, follow these specific guidelines:
 4. **COMMIT**: Feature + tests together, refactoring separately
 
 ### Example TDD Flow
+
 ```typescript
 // 1. RED - Test first
-describe("calculateTotal", () => {
-  it("should sum item prices", () => {
+describe('calculateTotal', () => {
+  it('should sum item prices', () => {
     expect(calculateTotal([{ price: 10 }, { price: 20 }])).toBe(30);
   });
 });
@@ -110,61 +116,65 @@ const calculateTotal = (items: Item[]): number => {
 ## Testing Principles
 
 ### Test Behavior, Not Implementation
+
 ```typescript
 // ✅ GOOD - Tests behavior
-it("should decline payment when insufficient funds", () => {
+it('should decline payment when insufficient funds', () => {
   const result = processPayment({ amount: 100 }, { balance: 50 });
   expect(result.success).toBe(false);
-  expect(result.error).toBe("Insufficient funds");
+  expect(result.error).toBe('Insufficient funds');
 });
 
 // ❌ BAD - Tests implementation
-it("should call validateBalance", () => {
+it('should call validateBalance', () => {
   // Never test if internal methods were called
 });
 ```
 
 ### Test Data Factories
+
 ```typescript
 const createMockUser = (overrides?: Partial<User>): User => {
   return {
-    id: "123",
-    email: "test@example.com",
-    role: "user",
-    ...overrides
+    id: '123',
+    email: 'test@example.com',
+    role: 'user',
+    ...overrides,
   };
 };
 ```
 
 ### CRITICAL: Use Real Schemas in Tests
+
 ```typescript
 // ❌ WRONG - Never redefine schemas in tests
 const TestUserSchema = z.object({ id: z.string() });
 
 // ✅ CORRECT - Import from production code
-import { UserSchema } from "@app/schemas";
+import { UserSchema } from '@app/schemas';
 ```
 
 ### 100% Coverage Through Behavior
+
 Coverage happens naturally when testing all business behaviors. Never test internals directly.
 
 ```typescript
 // validator.ts (internal)
 const validateAmount = (amount: number) => amount > 0 && amount <= 10000;
 
-// processor.ts (public API) 
+// processor.ts (public API)
 const processPayment = (payment: Payment) => {
   if (!validateAmount(payment.amount)) {
-    return { success: false, error: "Invalid amount" };
+    return { success: false, error: 'Invalid amount' };
   }
   // process...
 };
 
 // processor.test.ts - achieves 100% coverage of validator
-it("rejects negative amounts", () => {
-  expect(processPayment({ amount: -1 })).toEqual({ 
-    success: false, 
-    error: "Invalid amount" 
+it('rejects negative amounts', () => {
+  expect(processPayment({ amount: -1 })).toEqual({
+    success: false,
+    error: 'Invalid amount',
   });
 });
 ```
@@ -172,6 +182,7 @@ it("rejects negative amounts", () => {
 ## Code Patterns
 
 ### Use Options Objects
+
 ```typescript
 // ✅ Preferred
 type CreateOrderOptions = {
@@ -181,7 +192,7 @@ type CreateOrderOptions = {
 };
 
 const createOrder = (options: CreateOrderOptions): Order => {
-  const { items, customerId, shipping = "standard" } = options;
+  const { items, customerId, shipping = 'standard' } = options;
   // ...
 };
 
@@ -192,6 +203,7 @@ const createOrder = (items: Item[], customerId: string, shipping?: ShippingMetho
 ```
 
 ### Immutable Updates
+
 ```typescript
 // ✅ Good
 const addItem = (items: Item[], newItem: Item): Item[] => {
@@ -206,12 +218,13 @@ const addItem = (items: Item[], newItem: Item): Item[] => {
 ```
 
 ### Early Returns
+
 ```typescript
 // ✅ Good
 const processUser = (user: User): void => {
   if (!user.isActive) return;
   if (!user.hasPermission) return;
-  
+
   // Process user
 };
 
@@ -228,17 +241,20 @@ const processUser = (user: User): void => {
 ## Refactoring Guidelines
 
 ### When to Refactor
+
 - After achieving green tests
 - When you see knowledge duplication (not just code duplication)
 - When names don't clearly express intent
 - When structure could be simpler
 
 ### When NOT to Refactor
+
 - When code is already clean and clear
 - When it would create premature abstractions
 - When tests would need to change (refactoring shouldn't break tests)
 
 ### DRY = Don't Repeat KNOWLEDGE (not code)
+
 ```typescript
 // NOT a DRY violation - different knowledge, similar structure
 const validateAge = (age: number) => age >= 18 && age <= 100;
@@ -249,6 +265,7 @@ const FREE_SHIPPING = 50; // Use this constant everywhere
 ```
 
 ### Refactoring Checklist
+
 - [ ] All tests still pass
 - [ ] No changes to public APIs
 - [ ] Code is more readable than before
@@ -257,18 +274,22 @@ const FREE_SHIPPING = 50; // Use this constant everywhere
 ## Working with Claude
 
 ### Before Starting
+
 1. Read existing tests to understand patterns
 2. Check CLAUDE.md for project-specific knowledge
 3. Identify the next behavior to implement
 
 ### During Development
+
 1. **ALWAYS** start with a failing test
 2. Stop immediately if writing code without a test
 3. Keep changes small and incremental
 4. Ask for clarification when requirements are ambiguous
 
 ### After Each Session
+
 Update CLAUDE.md with:
+
 - Patterns discovered
 - Gotchas encountered
 - Context that would have helped
@@ -277,6 +298,7 @@ Update CLAUDE.md with:
 ## Quick Decision Guide
 
 **Need to add a feature?**
+
 1. Write failing test for simplest case
 2. Make it pass with minimal code
 3. Refactor if valuable
@@ -284,11 +306,13 @@ Update CLAUDE.md with:
 5. Repeat
 
 **Found a bug?**
+
 1. Write failing test that exposes the bug
 2. Fix with minimal change
 3. Add more tests for related cases
 
 **Want to refactor?**
+
 1. Ensure all tests are green
 2. Commit current state
 3. Make changes without altering behavior
@@ -296,6 +320,7 @@ Update CLAUDE.md with:
 5. Commit refactoring separately
 
 ## Remember
+
 - **TDD is not optional** - No production code without a failing test
 - **Behavior over implementation** - Test what it does, not how
 - **Small increments** - Tiny steps with frequent commits

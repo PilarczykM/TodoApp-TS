@@ -40,11 +40,27 @@ export class TodoService {
         data: todo,
       };
     } catch (error) {
-      const errorResult = this.errorHandler.handleError(error);
-      return {
-        success: false,
-        error: errorResult.message,
-      };
+      return this.handleServiceError(error);
     }
+  }
+
+  async listTodos(): Promise<ServiceResult<Todo[]>> {
+    try {
+      const todos = await this.todoRepository.findAll();
+      return {
+        success: true,
+        data: todos,
+      };
+    } catch (error) {
+      return this.handleServiceError(error);
+    }
+  }
+
+  private handleServiceError<T>(error: unknown): ServiceResult<T> {
+    const errorResult = this.errorHandler.handleError(error);
+    return {
+      success: false,
+      error: errorResult.message,
+    };
   }
 }

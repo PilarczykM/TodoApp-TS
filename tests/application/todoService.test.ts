@@ -32,11 +32,7 @@ describe('TodoService', () => {
 
   describe('constructor', () => {
     it('should create TodoService with injected dependencies', () => {
-      const todoService = new TodoService(
-        mockTodoRepository,
-        mockIdGenerator,
-        mockErrorHandler
-      );
+      const todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
 
       expect(todoService).toBeInstanceOf(TodoService);
     });
@@ -46,11 +42,7 @@ describe('TodoService', () => {
     let todoService: TodoService;
 
     beforeEach(() => {
-      todoService = new TodoService(
-        mockTodoRepository,
-        mockIdGenerator,
-        mockErrorHandler
-      );
+      todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
     });
 
     it('should create a new todo successfully', async () => {
@@ -97,10 +89,73 @@ describe('TodoService', () => {
       expect(result.success).toBe(false);
       expect(result.data).toBeUndefined();
       expect(result.error).toBe('Invalid Todo data');
-      expect(mockErrorHandler.handleError).toHaveBeenCalledWith(
-        expect.any(ValidationError)
-      );
+      expect(mockErrorHandler.handleError).toHaveBeenCalledWith(expect.any(ValidationError));
       expect(mockTodoRepository.save).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('listTodos', () => {
+    let todoService: TodoService;
+
+    beforeEach(() => {
+      todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
+    });
+
+    it('should return all todos successfully', async () => {
+      const mockTodos = [
+        new Todo({
+          id: '1',
+          title: 'Todo 1',
+          description: 'Description 1',
+          status: 'pending' as TodoStatus,
+        }),
+        new Todo({
+          id: '2',
+          title: 'Todo 2',
+          description: 'Description 2',
+          status: 'completed' as TodoStatus,
+        }),
+      ];
+
+      mockTodoRepository.findAll.mockResolvedValue(mockTodos);
+
+      const result = await todoService.listTodos();
+
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual(mockTodos);
+      expect(result.data).toHaveLength(2);
+      expect(result.error).toBeUndefined();
+      expect(mockTodoRepository.findAll).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle repository errors', async () => {
+      const repositoryError = new Error('Database connection failed');
+      mockTodoRepository.findAll.mockRejectedValue(repositoryError);
+
+      const errorResult: ErrorResult = {
+        code: 'SERVICE_ERROR',
+        message: 'Database connection failed',
+        details: { originalError: 'Database connection failed' },
+      };
+      mockErrorHandler.handleError.mockReturnValue(errorResult);
+
+      const result = await todoService.listTodos();
+
+      expect(result.success).toBe(false);
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBe('Database connection failed');
+      expect(mockErrorHandler.handleError).toHaveBeenCalledWith(repositoryError);
+    });
+
+    it('should return empty array when no todos exist', async () => {
+      mockTodoRepository.findAll.mockResolvedValue([]);
+
+      const result = await todoService.listTodos();
+
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual([]);
+      expect(result.data).toHaveLength(0);
+      expect(result.error).toBeUndefined();
     });
   });
 });

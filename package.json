@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon src/interfaces/cli.ts",
+    "dev": "nodemon",
     "start": "node dist/interfaces/cli.js",
     "test": "jest",
     "test:watch": "jest --watch",

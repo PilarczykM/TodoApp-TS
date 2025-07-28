@@ -3,6 +3,7 @@ import { TodoData } from '../../src/domain/todoValidator';
 import { FileSystem } from '../../src/infrastructure/fileSystem';
 import { TodoRepository } from '../../src/infrastructure/todoRepository';
 import { JsonTodoRepository } from '../../src/infrastructure/jsonTodoRepository';
+import { IErrorHandler, ErrorResult } from '../../src/application/errorHandler';
 
 // Test constants
 const DEFAULT_FILE_PATH = 'data/todos.json';
@@ -37,6 +38,10 @@ const createFileSystemMock = (): jest.Mocked<FileSystem> => ({
   remove: jest.fn(),
 });
 
+const createErrorHandlerMock = (): jest.Mocked<IErrorHandler> => ({
+  handleError: jest.fn(),
+});
+
 // Test helpers
 const setupFileWithTodos = (fileSystem: jest.Mocked<FileSystem>, todos: TodoData[]): void => {
   fileSystem.readFile.mockResolvedValue(JSON.stringify(todos));
@@ -52,11 +57,14 @@ const expectTodoNotFoundError = async (promise: Promise<any>): Promise<void> => 
 
 describe('JsonTodoRepository', () => {
   let fileSystem: jest.Mocked<FileSystem>;
+  let errorHandler: jest.Mocked<IErrorHandler>;
   let todoRepository: TodoRepository;
   let testTodoData: TodoData;
 
   beforeEach(() => {
     fileSystem = createFileSystemMock();
+    errorHandler = createErrorHandlerMock();
+    // Default to legacy constructor for backward compatibility tests
     todoRepository = new JsonTodoRepository(fileSystem);
     testTodoData = createTestTodo();
   });
@@ -287,6 +295,96 @@ describe('JsonTodoRepository', () => {
 
         expect(fileSystem.ensureDir).toHaveBeenCalledWith('custom');
         expectFileWriteCall(fileSystem, customFilePath, [testTodoData]);
+      });
+    });
+
+    describe('ErrorHandler integration', () => {
+      beforeEach(() => {
+        // Create repository with ErrorHandler for these tests
+        todoRepository = new JsonTodoRepository(fileSystem, errorHandler);
+      });
+
+      it('should use ErrorHandler for file read errors during update', async () => {
+        const fileError = new Error('ENOENT: file not found');
+        (fileError as any).code = 'ENOENT';
+        fileSystem.readFile.mockRejectedValue(fileError);
+
+        const errorResult: ErrorResult = {
+          code: 'IO_ERROR',
+          message: 'File system operation failed',
+          details: { type: 'file_not_found', path: DEFAULT_FILE_PATH },
+        };
+        errorHandler.handleError.mockReturnValue(errorResult);
+
+        const todo = new Todo(testTodoData);
+
+        await expect(todoRepository.update(todo)).rejects.toThrow('File system operation failed');
+        expect(errorHandler.handleError).toHaveBeenCalledWith(fileError);
+      });
+
+      it('should use ErrorHandler for file read errors during delete', async () => {
+        const fileError = new Error('EACCES: permission denied');
+        (fileError as any).code = 'EACCES';
+        fileSystem.readFile.mockRejectedValue(fileError);
+
+        const errorResult: ErrorResult = {
+          code: 'IO_ERROR',
+          message: 'File system operation failed',
+          details: { type: 'permission_denied', path: DEFAULT_FILE_PATH },
+        };
+        errorHandler.handleError.mockReturnValue(errorResult);
+
+        await expect(todoRepository.delete('123')).rejects.toThrow('File system operation failed');
+        expect(errorHandler.handleError).toHaveBeenCalledWith(fileError);
+      });
+
+      it('should not call ErrorHandler for todo not found errors', async () => {
+        setupFileWithTodos(fileSystem, [testTodoData]);
+
+        await expectTodoNotFoundError(todoRepository.update(new Todo(createTestTodo({ id: 'nonexistent' }))));
+        expect(errorHandler.handleError).not.toHaveBeenCalled();
+      });
+
+      it('should preserve JSON parsing errors by re-throwing them directly', async () => {
+        const jsonError = new SyntaxError('Unexpected token');
+        fileSystem.readFile.mockResolvedValue(INVALID_JSON);
+
+        await expect(todoRepository.findById('123')).rejects.toThrow(SyntaxError);
+        expect(errorHandler.handleError).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('backward compatibility', () => {
+      it('should work without ErrorHandler (legacy constructor)', async () => {
+        const legacyRepository = new JsonTodoRepository(fileSystem);
+        setupFileWithTodos(fileSystem, [testTodoData]);
+
+        const result = await legacyRepository.findById('123');
+
+        expect(result).toBeInstanceOf(Todo);
+        expect(result?.id).toBe('123');
+      });
+
+      it('should work with old constructor signature (fileSystem, filePath)', async () => {
+        const customFilePath = 'custom/todos.json';
+        const legacyRepository = new JsonTodoRepository(fileSystem, customFilePath);
+        setupFileWithTodos(fileSystem, [testTodoData]);
+
+        const result = await legacyRepository.findById('123');
+
+        expect(result).toBeInstanceOf(Todo);
+        expect(result?.id).toBe('123');
+      });
+
+      it('should work with new constructor signature (fileSystem, errorHandler, filePath)', async () => {
+        const customFilePath = 'custom/todos.json';
+        const newRepository = new JsonTodoRepository(fileSystem, errorHandler, customFilePath);
+        setupFileWithTodos(fileSystem, [testTodoData]);
+
+        const result = await newRepository.findById('123');
+
+        expect(result).toBeInstanceOf(Todo);
+        expect(result?.id).toBe('123');
       });
     });
   });

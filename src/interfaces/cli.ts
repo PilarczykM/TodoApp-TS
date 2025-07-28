@@ -56,7 +56,8 @@ async function main(): Promise<void> {
 }
 
 // Only run if this file is executed directly (not imported)
-if (require.main === module) {
+// In ES modules, we check if import.meta.url matches the main module
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(error => {
     console.error('Unhandled error:', error);
     process.exit(1);

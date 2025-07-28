@@ -13,4 +13,8 @@ export class FsExtraFileSystem implements FileSystem {
   async ensureDir(path: string): Promise<void> {
     await fs.ensureDir(path);
   }
+
+  async remove(path: string): Promise<void> {
+    await fs.remove(path);
+  }
 }

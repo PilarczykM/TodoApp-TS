@@ -1,5 +1,5 @@
 import { ValidationError } from '../../src/domain/validationError';
-import { ErrorHandler } from '../../src/application/errorHandler';
+import { ErrorHandler } from '../../src/application/services/ErrorHandler';
 
 // Test data factories
 const createFileSystemError = (message: string = 'ENOENT: no such file or directory'): Error => {

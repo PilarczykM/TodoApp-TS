@@ -1,8 +1,8 @@
-import { Todo } from '../domain/todo';
-import { TodoData } from '../domain/todoValidator';
-import { FileSystem } from './fileSystem';
-import { TodoRepository } from './todoRepository';
-import { IErrorHandler } from '../application/errorHandler';
+import { Todo } from '../../domain/todo';
+import { TodoData } from '../../domain/todoValidator';
+import { FileSystem } from '../../interfaces/infrastructure/FileSystem';
+import { TodoRepository } from '../../interfaces/infrastructure/TodoRepository';
+import { IErrorHandler } from '../../interfaces/application/IErrorHandler';
 
 const JSON_FORMATTING = [null, 2] as const;
 const ERROR_MESSAGES = {

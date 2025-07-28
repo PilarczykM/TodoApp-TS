@@ -1,4 +1,4 @@
-import { FsExtraFileSystem } from '../../src/infrastructure/fsExtraFileSystem';
+import { FsExtraFileSystem } from '../../src/infrastructure/fileSystem/FsExtraFileSystem';
 import * as path from 'path';
 import * as os from 'os';
 

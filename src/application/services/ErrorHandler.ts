@@ -1,14 +1,5 @@
-import { ValidationError } from '../domain/validationError';
-
-export type ErrorResult = {
-  code: string;
-  message: string;
-  details: Record<string, unknown>;
-};
-
-export interface IErrorHandler {
-  handleError(error: unknown): ErrorResult;
-}
+import { ValidationError } from '../../domain/validationError';
+import { ErrorResult, IErrorHandler } from '../../interfaces/application/IErrorHandler';
 
 export class ErrorHandler implements IErrorHandler {
   private readonly _errorHandlers: Array<[new (...args: any[]) => Error, (error: unknown) => ErrorResult]> = [

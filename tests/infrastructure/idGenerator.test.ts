@@ -12,6 +12,7 @@ describe('IdGenerator', () => {
 });
 
 describe('UuidIdGenerator', () => {
+  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   let generator: UuidIdGenerator;
 
   beforeEach(() => {
@@ -23,7 +24,7 @@ describe('UuidIdGenerator', () => {
       const id = generator.generate();
 
       expect(typeof id).toBe('string');
-      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+      expect(id).toMatch(UUID_REGEX);
     });
 
     it('should generate unique IDs', () => {
@@ -44,7 +45,7 @@ describe('UuidIdGenerator', () => {
       const ids = Array.from({ length: 5 }, () => generator.generate());
 
       ids.forEach(id => {
-        expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+        expect(id).toMatch(UUID_REGEX);
       });
     });
   });

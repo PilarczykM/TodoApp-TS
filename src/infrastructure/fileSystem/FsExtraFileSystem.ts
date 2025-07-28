@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import { FileSystem } from './fileSystem';
+import { FileSystem } from '../../interfaces/infrastructure/FileSystem';
 
 export class FsExtraFileSystem implements FileSystem {
   async readFile(path: string): Promise<string> {

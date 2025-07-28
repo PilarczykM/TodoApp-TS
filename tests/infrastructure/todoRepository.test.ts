@@ -1,9 +1,9 @@
 import { Todo } from '../../src/domain/todo';
 import { TodoData } from '../../src/domain/todoValidator';
-import { FileSystem } from '../../src/infrastructure/fileSystem';
-import { TodoRepository } from '../../src/infrastructure/todoRepository';
-import { JsonTodoRepository } from '../../src/infrastructure/jsonTodoRepository';
-import { IErrorHandler, ErrorResult } from '../../src/application/errorHandler';
+import { FileSystem } from '../../src/interfaces/infrastructure/FileSystem';
+import { TodoRepository } from '../../src/interfaces/infrastructure/TodoRepository';
+import { JsonTodoRepository } from '../../src/infrastructure/repositories/JsonTodoRepository';
+import { IErrorHandler, ErrorResult } from '../../src/interfaces/application/IErrorHandler';
 
 // Test constants
 const DEFAULT_FILE_PATH = 'data/todos.json';

@@ -40,9 +40,6 @@ const createFileSystemMock = (): jest.Mocked<FileSystem> => ({
 
 const createErrorHandlerMock = (): jest.Mocked<IErrorHandler> => ({
   handleError: jest.fn(),
-  isRetryableError: jest.fn(),
-  getErrorSeverity: jest.fn(),
-  formatErrorForUser: jest.fn(),
 });
 
 // Test helpers

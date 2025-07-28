@@ -23,6 +23,8 @@ export type UpdateTodoInput = {
 };
 
 export class TodoService {
+  private static readonly TODO_NOT_FOUND = 'Todo not found';
+
   constructor(
     private readonly todoRepository: TodoRepository,
     private readonly idGenerator: IdGenerator,
@@ -41,10 +43,7 @@ export class TodoService {
 
       await this.todoRepository.save(todo);
 
-      return {
-        success: true,
-        data: todo,
-      };
+      return this.createSuccessResult(todo);
     } catch (error) {
       return this.handleServiceError(error);
     }
@@ -53,10 +52,7 @@ export class TodoService {
   async listTodos(): Promise<ServiceResult<Todo[]>> {
     try {
       const todos = await this.todoRepository.findAll();
-      return {
-        success: true,
-        data: todos,
-      };
+      return this.createSuccessResult(todos);
     } catch (error) {
       return this.handleServiceError(error);
     }
@@ -64,27 +60,21 @@ export class TodoService {
 
   async updateTodo(id: string, updates: UpdateTodoInput): Promise<ServiceResult<Todo>> {
     try {
-      const existingTodo = await this.todoRepository.findById(id);
-      if (!existingTodo) {
-        return {
-          success: false,
-          error: 'Todo not found',
-        };
+      const validationError = await this.validateTodoExists(id);
+      if (validationError) {
+        return validationError as ServiceResult<Todo>;
       }
 
-      const updatedTodo = new Todo({
-        id: existingTodo.id,
-        title: updates.title ?? existingTodo.title,
-        description: updates.description ?? existingTodo.description,
-        status: updates.status ?? existingTodo.status,
-      });
+      const existingTodo = await this.todoRepository.findById(id);
+      if (!existingTodo) {
+        throw new Error('Todo should exist after validation');
+      }
+
+      const updatedTodo = this.mergeTodoUpdates(existingTodo, updates);
 
       await this.todoRepository.update(updatedTodo);
 
-      return {
-        success: true,
-        data: updatedTodo,
-      };
+      return this.createSuccessResult(updatedTodo);
     } catch (error) {
       return this.handleServiceError(error);
     }
@@ -92,22 +82,44 @@ export class TodoService {
 
   async deleteTodo(id: string): Promise<ServiceResult<void>> {
     try {
-      const existingTodo = await this.todoRepository.findById(id);
-      if (!existingTodo) {
-        return {
-          success: false,
-          error: 'Todo not found',
-        };
+      const validationError = await this.validateTodoExists(id);
+      if (validationError) {
+        return validationError as ServiceResult<void>;
       }
 
       await this.todoRepository.delete(id);
 
-      return {
-        success: true,
-      };
+      return this.createSuccessResult();
     } catch (error) {
       return this.handleServiceError(error);
     }
+  }
+
+  private async validateTodoExists(id: string): Promise<ServiceResult<never> | null> {
+    const existingTodo = await this.todoRepository.findById(id);
+    if (!existingTodo) {
+      return {
+        success: false,
+        error: TodoService.TODO_NOT_FOUND,
+      };
+    }
+    return null;
+  }
+
+  private createSuccessResult<T>(data?: T): ServiceResult<T> {
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  private mergeTodoUpdates(existingTodo: Todo, updates: UpdateTodoInput): Todo {
+    return new Todo({
+      id: existingTodo.id,
+      title: updates.title ?? existingTodo.title,
+      description: updates.description ?? existingTodo.description,
+      status: updates.status ?? existingTodo.status,
+    });
   }
 
   private handleServiceError<T>(error: unknown): ServiceResult<T> {

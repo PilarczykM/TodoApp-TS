@@ -11,6 +11,25 @@ describe('TodoService', () => {
   let mockTodoRepository: jest.Mocked<TodoRepository>;
   let mockIdGenerator: jest.Mocked<IdGenerator>;
   let mockErrorHandler: jest.Mocked<IErrorHandler>;
+  let todoService: TodoService;
+
+  const createMockTodo = (
+    overrides: Partial<{ id: string; title: string; description: string; status: TodoStatus }> = {}
+  ): Todo => {
+    return new Todo({
+      id: '1',
+      title: 'Test Todo',
+      description: 'Test Description',
+      status: 'pending' as TodoStatus,
+      ...overrides,
+    });
+  };
+
+  const createErrorResult = (message: string, code: string = 'VALIDATION_ERROR'): ErrorResult => ({
+    code,
+    message,
+    details: { errors: [message] },
+  });
 
   beforeEach(() => {
     mockTodoRepository = {
@@ -28,23 +47,17 @@ describe('TodoService', () => {
     mockErrorHandler = {
       handleError: jest.fn(),
     };
+
+    todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
   });
 
   describe('constructor', () => {
     it('should create TodoService with injected dependencies', () => {
-      const todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
-
       expect(todoService).toBeInstanceOf(TodoService);
     });
   });
 
   describe('createTodo', () => {
-    let todoService: TodoService;
-
-    beforeEach(() => {
-      todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
-    });
-
     it('should create a new todo successfully', async () => {
       const input: CreateTodoInput = {
         title: 'Test Todo',
@@ -77,11 +90,7 @@ describe('TodoService', () => {
       const generatedId = 'generated-id';
       mockIdGenerator.generate.mockReturnValue(generatedId);
 
-      const errorResult: ErrorResult = {
-        code: 'VALIDATION_ERROR',
-        message: 'Invalid Todo data',
-        details: { errors: ['Title cannot be empty'] },
-      };
+      const errorResult = createErrorResult('Invalid Todo data');
       mockErrorHandler.handleError.mockReturnValue(errorResult);
 
       const result = await todoService.createTodo(input);
@@ -95,26 +104,10 @@ describe('TodoService', () => {
   });
 
   describe('listTodos', () => {
-    let todoService: TodoService;
-
-    beforeEach(() => {
-      todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
-    });
-
     it('should return all todos successfully', async () => {
       const mockTodos = [
-        new Todo({
-          id: '1',
-          title: 'Todo 1',
-          description: 'Description 1',
-          status: 'pending' as TodoStatus,
-        }),
-        new Todo({
-          id: '2',
-          title: 'Todo 2',
-          description: 'Description 2',
-          status: 'completed' as TodoStatus,
-        }),
+        createMockTodo({ id: '1', title: 'Todo 1', description: 'Description 1' }),
+        createMockTodo({ id: '2', title: 'Todo 2', description: 'Description 2', status: 'completed' as TodoStatus }),
       ];
 
       mockTodoRepository.findAll.mockResolvedValue(mockTodos);
@@ -132,11 +125,7 @@ describe('TodoService', () => {
       const repositoryError = new Error('Database connection failed');
       mockTodoRepository.findAll.mockRejectedValue(repositoryError);
 
-      const errorResult: ErrorResult = {
-        code: 'SERVICE_ERROR',
-        message: 'Database connection failed',
-        details: { originalError: 'Database connection failed' },
-      };
+      const errorResult = createErrorResult('Database connection failed', 'SERVICE_ERROR');
       mockErrorHandler.handleError.mockReturnValue(errorResult);
 
       const result = await todoService.listTodos();
@@ -160,18 +149,10 @@ describe('TodoService', () => {
   });
 
   describe('updateTodo', () => {
-    let todoService: TodoService;
-
-    beforeEach(() => {
-      todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
-    });
-
     it('should update an existing todo successfully', async () => {
-      const existingTodo = new Todo({
-        id: '1',
+      const existingTodo = createMockTodo({
         title: 'Original Title',
         description: 'Original Description',
-        status: 'pending' as TodoStatus,
       });
 
       const updateInput: UpdateTodoInput = {
@@ -213,11 +194,9 @@ describe('TodoService', () => {
     });
 
     it('should handle validation errors when updating todo', async () => {
-      const existingTodo = new Todo({
-        id: '1',
+      const existingTodo = createMockTodo({
         title: 'Original Title',
         description: 'Original Description',
-        status: 'pending' as TodoStatus,
       });
 
       const updateInput: UpdateTodoInput = {
@@ -226,11 +205,7 @@ describe('TodoService', () => {
 
       mockTodoRepository.findById.mockResolvedValue(existingTodo);
 
-      const errorResult: ErrorResult = {
-        code: 'VALIDATION_ERROR',
-        message: 'Invalid Todo data',
-        details: { errors: ['Title cannot be empty'] },
-      };
+      const errorResult = createErrorResult('Invalid Todo data');
       mockErrorHandler.handleError.mockReturnValue(errorResult);
 
       const result = await todoService.updateTodo('1', updateInput);
@@ -244,18 +219,10 @@ describe('TodoService', () => {
   });
 
   describe('deleteTodo', () => {
-    let todoService: TodoService;
-
-    beforeEach(() => {
-      todoService = new TodoService(mockTodoRepository, mockIdGenerator, mockErrorHandler);
-    });
-
     it('should delete an existing todo successfully', async () => {
-      const existingTodo = new Todo({
-        id: '1',
+      const existingTodo = createMockTodo({
         title: 'Todo to delete',
         description: 'Description',
-        status: 'pending' as TodoStatus,
       });
 
       mockTodoRepository.findById.mockResolvedValue(existingTodo);
@@ -283,22 +250,16 @@ describe('TodoService', () => {
     });
 
     it('should handle repository errors during deletion', async () => {
-      const existingTodo = new Todo({
-        id: '1',
+      const existingTodo = createMockTodo({
         title: 'Todo to delete',
         description: 'Description',
-        status: 'pending' as TodoStatus,
       });
 
       const repositoryError = new Error('Database deletion failed');
       mockTodoRepository.findById.mockResolvedValue(existingTodo);
       mockTodoRepository.delete.mockRejectedValue(repositoryError);
 
-      const errorResult: ErrorResult = {
-        code: 'SERVICE_ERROR',
-        message: 'Database deletion failed',
-        details: { originalError: 'Database deletion failed' },
-      };
+      const errorResult = createErrorResult('Database deletion failed', 'SERVICE_ERROR');
       mockErrorHandler.handleError.mockReturnValue(errorResult);
 
       const result = await todoService.deleteTodo('1');

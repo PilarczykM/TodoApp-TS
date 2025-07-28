@@ -1,15 +1,7 @@
 import { IdGenerator } from '../../src/infrastructure/idGenerator';
 import { UuidIdGenerator } from '../../src/infrastructure/uuidIdGenerator';
 
-describe('IdGenerator', () => {
-  describe('interface contract', () => {
-    it('should have generate method that returns string', () => {
-      const generator: IdGenerator = new UuidIdGenerator();
-      const id = generator.generate();
-      expect(typeof id).toBe('string');
-    });
-  });
-});
+
 
 describe('UuidIdGenerator', () => {
   const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

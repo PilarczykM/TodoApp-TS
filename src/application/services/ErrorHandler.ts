@@ -2,6 +2,7 @@ import { ValidationError } from '../../domain/validationError';
 import { ErrorResult, IErrorHandler } from '../../interfaces/application/IErrorHandler';
 
 export class ErrorHandler implements IErrorHandler {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private readonly _errorHandlers: Array<[new (...args: any[]) => Error, (error: unknown) => ErrorResult]> = [
     [ValidationError, this.handleValidationError.bind(this)],
     [SyntaxError, this.handleSyntaxError.bind(this)],

@@ -2,6 +2,7 @@ import { Todo } from '../domain/todo';
 import { TodoData } from '../domain/todoValidator';
 import { FileSystem } from './fileSystem';
 import { TodoRepository } from './todoRepository';
+import { IErrorHandler } from '../application/errorHandler';
 
 const JSON_FORMATTING = [null, 2] as const;
 const ERROR_MESSAGES = {
@@ -11,19 +12,37 @@ const ERROR_MESSAGES = {
 export class JsonTodoRepository implements TodoRepository {
   private readonly filePath: string;
   private readonly dataDirectory: string;
+  private readonly errorHandler?: IErrorHandler;
 
   constructor(
     private readonly fileSystem: FileSystem,
-    filePath: string = 'data/todos.json'
+    errorHandlerOrFilePath?: IErrorHandler | string,
+    filePath?: string
   ) {
-    this.filePath = filePath;
-    this.dataDirectory = filePath.split('/')[0];
+    // Handle different constructor signatures for backward compatibility
+    if (typeof errorHandlerOrFilePath === 'string') {
+      // Legacy signature: (fileSystem, filePath)
+      this.filePath = errorHandlerOrFilePath;
+      this.errorHandler = undefined;
+    } else {
+      // New signature: (fileSystem, errorHandler, filePath?)
+      this.errorHandler = errorHandlerOrFilePath;
+      this.filePath = filePath || 'data/todos.json';
+    }
+
+    this.dataDirectory = this.filePath.split('/')[0];
   }
 
   private handleReadError(error: unknown): never {
     if (error instanceof SyntaxError) {
       throw error; // Re-throw JSON parsing errors
     }
+
+    if (this.errorHandler) {
+      const errorResult = this.errorHandler.handleError(error);
+      throw new Error(errorResult.message);
+    }
+
     throw new Error(ERROR_MESSAGES.TODO_NOT_FOUND);
   }
 
@@ -36,7 +55,14 @@ export class JsonTodoRepository implements TodoRepository {
       if (error instanceof SyntaxError) {
         throw error; // Re-throw JSON parsing errors
       }
-      return []; // File not found, return empty array
+
+      // If ErrorHandler is available, let file system errors bubble up for proper handling
+      // Otherwise, maintain backward compatibility by returning empty array
+      if (this.errorHandler) {
+        throw error;
+      }
+
+      return []; // File not found, return empty array (backward compatibility)
     }
   }
 
@@ -62,9 +88,7 @@ export class JsonTodoRepository implements TodoRepository {
 
       return null;
     } catch (error) {
-      if (error instanceof SyntaxError) {
-        throw error; // Re-throw JSON parsing errors
-      }
+      this.handleReadOnlyError(error);
       return null; // File not found, return null
     }
   }
@@ -74,11 +98,16 @@ export class JsonTodoRepository implements TodoRepository {
       const todos = await this.readTodosFromFile();
       return todos.map(todoData => new Todo(todoData));
     } catch (error) {
-      if (error instanceof SyntaxError) {
-        throw error; // Re-throw JSON parsing errors
-      }
+      this.handleReadOnlyError(error);
       return []; // File not found, return empty array
     }
+  }
+
+  private handleReadOnlyError(error: unknown): void {
+    if (error instanceof SyntaxError) {
+      throw error; // Re-throw JSON parsing errors
+    }
+    // For other errors (like file not found), let the caller handle the return value
   }
 
   private findTodoIndex(todos: TodoData[], id: string): number {
@@ -100,10 +129,7 @@ export class JsonTodoRepository implements TodoRepository {
       todos[todoIndex] = todo.toData();
       await this.writeTodosToFile(todos);
     } catch (error) {
-      if (error instanceof Error && error.message === ERROR_MESSAGES.TODO_NOT_FOUND) {
-        throw error;
-      }
-      this.handleReadError(error);
+      this.handleWriteOperationError(error);
     }
   }
 
@@ -116,10 +142,14 @@ export class JsonTodoRepository implements TodoRepository {
       todos.splice(todoIndex, 1);
       await this.writeTodosToFile(todos);
     } catch (error) {
-      if (error instanceof Error && error.message === ERROR_MESSAGES.TODO_NOT_FOUND) {
-        throw error;
-      }
-      this.handleReadError(error);
+      this.handleWriteOperationError(error);
     }
+  }
+
+  private handleWriteOperationError(error: unknown): never {
+    if (error instanceof Error && error.message === ERROR_MESSAGES.TODO_NOT_FOUND) {
+      throw error;
+    }
+    this.handleReadError(error);
   }
 }
